@@ -9,4 +9,10 @@ public class Projectile : MonoBehaviour
     {
         transform.Translate(Vector2.up * (Speed * Time.deltaTime));
     }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Enemy")) return;
+        other.GetComponent<Enemy.Enemy>().ReceiveHit(Damage);
+        gameObject.SetActive(false);
+    }
 }

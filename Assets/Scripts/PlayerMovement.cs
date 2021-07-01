@@ -1,16 +1,15 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : Player
 {
     private InputMap m_InputMap;
     private Vector2 m_Direction;
-    private Rigidbody2D m_rb;
     [SerializeField] private float speed;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_InputMap = new InputMap();
-        m_rb = GetComponent<Rigidbody2D>();
         m_InputMap.Player.Movement.performed += ctx => m_Direction = ctx.ReadValue<Vector2>();
         m_InputMap.Player.Movement.canceled += ctx => m_Direction = Vector2.zero;
     }

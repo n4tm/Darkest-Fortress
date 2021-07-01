@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : Player
 {
     private Animator m_Animator;
-    private Rigidbody2D m_rb;
-    
+
     private enum Facing
     {
         up,
@@ -28,10 +27,10 @@ public class PlayerAnimation : MonoBehaviour
     private Facing m_Facing;
     private string m_CurrentAnimation;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_Animator = GetComponent<Animator>();
-        m_rb = GetComponent<Rigidbody2D>();
         m_Facing = Facing.down;
     }
 
