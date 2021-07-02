@@ -1,3 +1,4 @@
+using Camera;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -28,14 +29,15 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            StunPlayer(aggressorPosition);
+            HitFeedback(aggressorPosition);
         }
     }
     
-    private void StunPlayer(Vector3 aggressorPosition)
+    private void HitFeedback(Vector3 aggressorPosition)
     {
         _playerController.ActivatePush(aggressorPosition);
         _playerController.ActivateBlink(invulnerabilityAfterHit);
+        CinemachineController.Instance.StartShake(10, .1f);
     }
     
     private void ActivateDeath()

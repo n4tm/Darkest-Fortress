@@ -39,7 +39,7 @@ public class Weapon : MonoBehaviour
 
     private void AdjustRotation()
     {
-        Vector2 direction = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
+        Vector2 direction = UnityEngine.Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
         transform.rotation = rotation;
