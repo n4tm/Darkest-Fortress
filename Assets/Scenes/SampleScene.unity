@@ -2759,9 +2759,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53d49bdc878a49541bb0aa8b002c17b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  health: 50
+  speed: 2
+  health: 30
   damage: 5
+  attackDelay: 3
+  minimalDistanceToPlayer: 2
+  attackSpeed: 4
 --- !u!95 &1408661876
 Animator:
   serializedVersion: 3
@@ -2793,12 +2796,14 @@ GameObject:
   - component: {fileID: 1832748478}
   - component: {fileID: 1832748480}
   - component: {fileID: 1832748482}
+  - component: {fileID: 1832748484}
   - component: {fileID: 1832748481}
   - component: {fileID: 1832748483}
-  - component: {fileID: 1832748484}
+  - component: {fileID: 1832748485}
+  - component: {fileID: 1832748486}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2901,6 +2906,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  pushForce: 15
+  pushDuration: 0.1
 --- !u!50 &1832748482
 Rigidbody2D:
   serializedVersion: 4
@@ -2934,6 +2941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 436520891293ab94181256899d08ef27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blinkIntensity: 0.05
 --- !u!61 &1832748484
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2960,3 +2968,30 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.6222695, y: 1.0627083}
   m_EdgeRadius: 0
+--- !u!114 &1832748485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832748477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16f163c65412a44c98003ab101572db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 20
+  invulnerabilityAfterHit: 2
+  currentHealth: 0
+--- !u!114 &1832748486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832748477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ccf3ba276b6b249994878a66bc96dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

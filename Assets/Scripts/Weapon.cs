@@ -10,27 +10,27 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float projectileDamage;
     [SerializeField] private float projectilePoolSize;
     
-    private InputMap m_InputMap;
-    private Queue<GameObject> projectilePool;
+    private InputMap _inputMap;
+    private Queue<GameObject> _projectilePool;
 
-    void Awake()
+    private void Awake()
     {
-        m_InputMap = new InputMap();
-        m_InputMap.Player.Shoot.performed += Shoot;
-        projectilePool = new Queue<GameObject>();
+        _inputMap = new InputMap();
+        _inputMap.Player.Shoot.performed += Shoot;
+        _projectilePool = new Queue<GameObject>();
         for (int i = 0; i < projectilePoolSize; i++)
         {
             GameObject newProjectile = Instantiate(shootPrefab, spawnPoint.position, transform.rotation);
             Projectile projectileComponent = newProjectile.GetComponent<Projectile>();
             projectileComponent.Speed = projectileSpeed;
             projectileComponent.Damage = projectileDamage;
-            projectilePool.Enqueue(newProjectile);
+            _projectilePool.Enqueue(newProjectile);
             newProjectile.SetActive(false);
         }
     }
 
-    private void OnEnable() => m_InputMap.Enable();
-    private void OnDisable() => m_InputMap.Disable();
+    private void OnEnable() => _inputMap.Enable();
+    private void OnDisable() => _inputMap.Disable();
     
     private void Update()
     {
@@ -47,11 +47,11 @@ public class Weapon : MonoBehaviour
 
     private void Shoot(InputAction.CallbackContext ctx)
     {
-        GameObject projectile = projectilePool.Dequeue();
+        GameObject projectile = _projectilePool.Dequeue();
         projectile.transform.position = spawnPoint.position;
         projectile.transform.rotation = transform.rotation;
         
         projectile.SetActive(true);
-        projectilePool.Enqueue(projectile);
+        _projectilePool.Enqueue(projectile);
     }
 }

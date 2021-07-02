@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Enemy
@@ -6,41 +7,77 @@ namespace Enemy
     {
         private enum AnimList
         {
-            walk_up,
-            walk_down,
-            walk_left,
-            walk_right
+            WalkUp,
+            WalkDown,
+            WalkLeft,
+            WalkRight
         }
+
+        [SerializeField] private float minimalDistanceToPlayer;
+        [SerializeField] private float attackSpeed;
         
-        private AnimList m_CurrentAnimation;
-        
+        private AnimList _currentAnimation;
+        private bool _isAttacking;
+
         private void FixedUpdate()
         {
-            Vector2 direction = (player.position - transform.position).normalized * speed;
-            m_rb.velocity = direction;
-            
+            if (_isAttacking || Player == null) return;
+            if ((transform.position - Player.position).sqrMagnitude > Mathf.Pow(minimalDistanceToPlayer, 2))
+            {
+                Vector2 direction = (Player.position - transform.position).normalized * speed;
+                Rb.velocity = direction;
+            }
+            else
+            {
+                if (Time.time > AttackDelayTimer)
+                {
+                    AttackDelayTimer = Time.time + attackDelay;
+                    StartCoroutine(ChargeAttack());
+                }
+                else
+                {
+                    Rb.velocity = Vector2.zero;
+                }
+            }
+
             AnimateEnemy();
         }
 
         private void AnimateEnemy()
         {
-            if (Mathf.Abs(m_rb.velocity.x) > Mathf.Abs(m_rb.velocity.y))
+            if (Mathf.Abs(Rb.velocity.x) > Mathf.Abs(Rb.velocity.y))
             {
-                if (m_rb.velocity.x > 0) ChangeAnimation(AnimList.walk_right);
-                else ChangeAnimation(AnimList.walk_left);
+                ChangeAnimation(Rb.velocity.x > 0 ? AnimList.WalkRight : AnimList.WalkLeft);
             }
             else
             {
-                if (m_rb.velocity.y > 0) ChangeAnimation(AnimList.walk_up);
-                else ChangeAnimation(AnimList.walk_down);
+                ChangeAnimation(Rb.velocity.y > 0 ? AnimList.WalkUp : AnimList.WalkDown);
             }
         }
 
         private void ChangeAnimation(AnimList animationName)
         {
-            if (m_CurrentAnimation == animationName) return;
-            m_CurrentAnimation = animationName;
-            m_Animator.Play(animationName.ToString());
+            if (_currentAnimation == animationName) return;
+            _currentAnimation = animationName;
+            Animator.Play(animationName.ToString());
+        }
+
+        IEnumerator ChargeAttack()
+        {
+            _isAttacking = true;
+            Vector2 originalPosition = transform.position;
+            Vector2 targetPosition = Player.position;
+
+            float percent = 0;
+            while (percent <= 1)
+            {
+                percent += Time.deltaTime * attackSpeed;
+                float formula = (-Mathf.Pow(percent, 2) + percent) * 4;
+                Rb.position = Vector2.Lerp(originalPosition, targetPosition, formula);
+                yield return null;
+            }
+
+            _isAttacking = false;
         }
     }
 }

@@ -7,26 +7,31 @@ namespace Enemy
         [SerializeField] protected float speed;
         [SerializeField] protected float health;
         [SerializeField] protected float damage;
+        [SerializeField] protected float attackDelay;
+        protected float AttackDelayTimer;
 
-        protected Transform player;
-        protected Rigidbody2D m_rb;
-        protected Animator m_Animator;
+        protected Transform Player;
+        protected Rigidbody2D Rb;
+        protected Animator Animator;
         
-        private float m_CurrentHealth;
+        private float _currentHealth;
 
         protected virtual void Awake()
         {
-            m_CurrentHealth = health;
-            m_rb = GetComponent<Rigidbody2D>();
-            m_Animator = GetComponent<Animator>();
-            
-            player = FindObjectOfType<PlayerMovement>().transform;
+            _currentHealth = health;
+            Rb = GetComponent<Rigidbody2D>();
+            Animator = GetComponent<Animator>();
+        }
+
+        protected virtual void Start()
+        {
+            Player = FindObjectOfType<PlayerController>().transform;
         }
 
         public virtual void ReceiveHit(float dmg)
         {
-            m_CurrentHealth -= dmg;
-            if (m_CurrentHealth <= 0)
+            _currentHealth -= dmg;
+            if (_currentHealth <= 0)
             {
                 StartDeath();
             }
@@ -35,6 +40,12 @@ namespace Enemy
         protected virtual void StartDeath()
         {
             Destroy(gameObject);
+        }
+
+        protected virtual void OnCollisionEnter2D(Collision2D other)
+        {
+            if (!other.transform.CompareTag("Player")) return;
+            other.transform.GetComponent<PlayerHealth>().ReceiveHit(damage, transform.position);
         }
     }
 }

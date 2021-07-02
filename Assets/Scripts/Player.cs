@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    protected Rigidbody2D m_rb;
+    protected Rigidbody2D Rb;
 
     protected virtual void Awake()
     {
-        m_rb = GetComponent<Rigidbody2D>();
+        Rb = GetComponent<Rigidbody2D>();
     }
 }
