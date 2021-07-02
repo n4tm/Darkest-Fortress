@@ -1,38 +1,41 @@
+using System.Collections;
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : Player
 {
-    private Animator m_Animator;
-    private Rigidbody2D m_rb;
-    
+    [SerializeField] private float blinkIntensity;
+    private Animator _animator;
+    private SpriteRenderer _renderer;
+
     private enum Facing
     {
-        up,
-        down,
-        left,
-        right
+        Up,
+        Down,
+        Left,
+        Right
     }
 
     private enum AnimList
     {
-        idle_up,
-        idle_down,
-        idle_left,
-        idle_right,
-        walk_up,
-        walk_down,
-        walk_left,
-        walk_right,
+        IdleUp,
+        IdleDown,
+        IdleLeft,
+        IdleRight,
+        WalkUp,
+        WalkDown,
+        WalkLeft,
+        WalkRight,
     }
     
-    private Facing m_Facing;
-    private string m_CurrentAnimation;
+    private Facing _facing;
+    private string _currentAnimation;
     
-    private void Awake()
+    protected override void Awake()
     {
-        m_Animator = GetComponent<Animator>();
-        m_rb = GetComponent<Rigidbody2D>();
-        m_Facing = Facing.down;
+        base.Awake();
+        _animator = GetComponent<Animator>();
+        _renderer = GetComponent<SpriteRenderer>();
+        _facing = Facing.Down;
     }
 
     private void FixedUpdate()
@@ -42,43 +45,61 @@ public class PlayerAnimation : MonoBehaviour
 
     private void ChangeAnimation()
     {
-        if (m_rb.velocity == Vector2.zero)
+        if (Rb.velocity == Vector2.zero)
         {
-            if (m_Facing == Facing.up) PlayAnimation(AnimList.idle_up);
-            else if (m_Facing == Facing.down) PlayAnimation(AnimList.idle_down);
-            else if (m_Facing == Facing.left) PlayAnimation(AnimList.idle_left);
-            else if (m_Facing == Facing.right) PlayAnimation(AnimList.idle_right);
+            if (_facing == Facing.Up) PlayAnimation(AnimList.IdleUp);
+            else if (_facing == Facing.Down) PlayAnimation(AnimList.IdleDown);
+            else if (_facing == Facing.Left) PlayAnimation(AnimList.IdleLeft);
+            else if (_facing == Facing.Right) PlayAnimation(AnimList.IdleRight);
         }
         else
         {
-            if (m_rb.velocity.x > 0.1f)
+            if (Rb.velocity.x > 0.1f)
             {
-                PlayAnimation(AnimList.walk_right);
-                m_Facing = Facing.right;
+                PlayAnimation(AnimList.WalkRight);
+                _facing = Facing.Right;
             } 
-            else if (m_rb.velocity.x < -0.1f)
+            else if (Rb.velocity.x < -0.1f)
             {
-                PlayAnimation(AnimList.walk_left);
-                m_Facing = Facing.left;
+                PlayAnimation(AnimList.WalkLeft);
+                _facing = Facing.Left;
             }
-            else if (m_rb.velocity.y > -0.1f)
+            else if (Rb.velocity.y > -0.1f)
             {
-                PlayAnimation(AnimList.walk_up);
-                m_Facing = Facing.up;
+                PlayAnimation(AnimList.WalkUp);
+                _facing = Facing.Up;
             }
-            else if (m_rb.velocity.y < 0.1f)
+            else if (Rb.velocity.y < 0.1f)
             {
-                PlayAnimation(AnimList.walk_down);
-                m_Facing = Facing.down;
+                PlayAnimation(AnimList.WalkDown);
+                _facing = Facing.Down;
             }
         }
 
     }
 
+    public void Blink(float duration)
+    {
+        StartCoroutine(ApplyBlinkEffect(duration));
+    }
+
+    IEnumerator ApplyBlinkEffect(float duration)
+    {
+        float timePassed = 0;
+        while (timePassed < duration)
+        {
+            timePassed += blinkIntensity;
+            _renderer.enabled = !_renderer.enabled;
+            yield return new WaitForSeconds(blinkIntensity);
+        }
+
+        _renderer.enabled = true;
+    }
+
     private void PlayAnimation(AnimList animationName)
     {
-        if (m_CurrentAnimation == animationName.ToString()) return;
-        m_CurrentAnimation = animationName.ToString();
-        m_Animator.Play(m_CurrentAnimation);
+        if (_currentAnimation == animationName.ToString()) return;
+        _currentAnimation = animationName.ToString();
+        _animator.Play(_currentAnimation);
     }
 }

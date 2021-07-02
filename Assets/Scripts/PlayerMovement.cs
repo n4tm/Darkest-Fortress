@@ -1,26 +1,45 @@
+using System.Collections;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : Player
 {
-    private InputMap m_InputMap;
-    private Vector2 m_Direction;
-    private Rigidbody2D m_rb;
     [SerializeField] private float speed;
-
-    private void Awake()
+    [SerializeField] private float pushForce;
+    [SerializeField] private float pushDuration;
+    
+    private InputMap _inputMap;
+    private Vector2 _direction;
+    private bool _isBeingPushed;
+    private Vector3 _pushDirection;
+    
+    protected override void Awake()
     {
-        m_InputMap = new InputMap();
-        m_rb = GetComponent<Rigidbody2D>();
-        m_InputMap.Player.Movement.performed += ctx => m_Direction = ctx.ReadValue<Vector2>();
-        m_InputMap.Player.Movement.canceled += ctx => m_Direction = Vector2.zero;
+        base.Awake();
+        _inputMap = new InputMap();
+        _inputMap.Player.Movement.performed += ctx => _direction = ctx.ReadValue<Vector2>();
+        _inputMap.Player.Movement.canceled += ctx => _direction = Vector2.zero;
     }
 
-    private void OnEnable() => m_InputMap.Enable();
+    private void OnEnable() => _inputMap.Enable();
 
-    private void OnDisable() => m_InputMap.Disable();
+    private void OnDisable() => _inputMap.Disable();
 
     private void FixedUpdate()
     {
-        m_rb.velocity = m_Direction * speed;
+        if (_isBeingPushed) Rb.velocity = _pushDirection * pushForce;
+        else Rb.velocity = _direction * speed;
+    }
+
+    public void Push(Vector3 aggressorPosition)
+    {
+        _pushDirection = (transform.position - aggressorPosition).normalized;
+        _isBeingPushed = true;
+        StartCoroutine(DeactivatePush());
+    }
+
+    private IEnumerator DeactivatePush()
+    {
+        yield return new WaitForSeconds(pushDuration);
+        _isBeingPushed = false;
     }
 }
