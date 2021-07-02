@@ -2603,7 +2603,9 @@ MonoBehaviour:
   shootPrefab: {fileID: 5102033218572972149, guid: 94eae8e9d8181954795c9edd95718671, type: 3}
   projectileSpeed: 5
   projectileDamage: 10
-  projectilePoolSize: 5
+  projectilePoolSize: 7
+  lifeTime: 1
+  fireRate: 0.5
 --- !u!1 &862231067
 GameObject:
   m_ObjectHideFlags: 0

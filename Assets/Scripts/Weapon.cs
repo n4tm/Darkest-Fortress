@@ -9,14 +9,19 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float projectileSpeed;
     [SerializeField] private float projectileDamage;
     [SerializeField] private float projectilePoolSize;
+    [SerializeField] private float lifeTime;
+    [SerializeField] private float fireRate;
     
     private InputMap _inputMap;
     private Queue<GameObject> _projectilePool;
-
+    private float _fireRateTimer;
+    private bool _shootPerformed;
+    
     private void Awake()
     {
         _inputMap = new InputMap();
-        _inputMap.Player.Shoot.performed += Shoot;
+        _inputMap.Player.Shoot.performed += ShootPerformed;
+        _inputMap.Player.Shoot.canceled += ShootPerformed;
         _projectilePool = new Queue<GameObject>();
         for (int i = 0; i < projectilePoolSize; i++)
         {
@@ -35,6 +40,12 @@ public class Weapon : MonoBehaviour
     private void Update()
     {
         AdjustRotation();
+        _fireRateTimer += Time.deltaTime;
+        if (_fireRateTimer > fireRate && _shootPerformed)
+        {
+            Shoot();
+            _fireRateTimer = 0;
+        }
     }
 
     private void AdjustRotation()
@@ -45,13 +56,19 @@ public class Weapon : MonoBehaviour
         transform.rotation = rotation;
     }
 
-    private void Shoot(InputAction.CallbackContext ctx)
+    private void ShootPerformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed) _shootPerformed = true;
+        else if (ctx.canceled) _shootPerformed = false;
+    }
+
+    private void Shoot()
     {
         GameObject projectile = _projectilePool.Dequeue();
         projectile.transform.position = spawnPoint.position;
         projectile.transform.rotation = transform.rotation;
-        
         projectile.SetActive(true);
+        projectile.GetComponent<Projectile>().DeactivateProjectile(lifeTime);
         _projectilePool.Enqueue(projectile);
     }
 }

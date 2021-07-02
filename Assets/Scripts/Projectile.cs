@@ -5,7 +5,7 @@ public class Projectile : MonoBehaviour
 {
     public float Speed { get; set; }
     public float Damage { get; set; }
-    [SerializeField] private float lifeTime;
+    private IEnumerator _projectileCoroutine;
     private void Update()
     {
         transform.Translate(Vector2.up * (Speed * Time.deltaTime));
@@ -19,11 +19,14 @@ public class Projectile : MonoBehaviour
 
     public void DeactivateProjectile(float projectileLifeTime)
     {
-        StartCoroutine(DeactivateInTime(lifeTime));
+        if (_projectileCoroutine != null) StopCoroutine(_projectileCoroutine);
+        _projectileCoroutine = DeactivateInTime(projectileLifeTime);
+        StartCoroutine(_projectileCoroutine);
     }
 
     private IEnumerator DeactivateInTime(float projectileLifeTime)
     {
         yield return new WaitForSeconds(projectileLifeTime);
+        gameObject.SetActive(false);
     }
 }
