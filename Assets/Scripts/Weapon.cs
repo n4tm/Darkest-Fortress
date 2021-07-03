@@ -19,6 +19,7 @@ public class Weapon : MonoBehaviour
     private Queue<GameObject> _projectilePool;
     private float _fireRateTimer;
     private bool _shootPerformed;
+    private bool _hasChangedSide;
     
     private void Awake()
     {
@@ -57,6 +58,7 @@ public class Weapon : MonoBehaviour
     {
         Vector2 direction;
         GameObject closestEnemy = GetClosestEnemy();
+        
         if (closestEnemy != null)
         {
             direction = closestEnemy.transform.position - transform.position;

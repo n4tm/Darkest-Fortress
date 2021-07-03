@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float health;
+    [SerializeField] private int health;
     [SerializeField] private float invulnerabilityAfterHit;
-    [SerializeField] private float currentHealth;
+    [SerializeField] private int currentHealth;
 
     private PlayerController _playerController;
 
@@ -17,12 +17,17 @@ public class PlayerHealth : MonoBehaviour
         _playerController = GetComponent<PlayerController>();
     }
 
-    public void ReceiveHit(float damage, Vector3 aggressorPosition)
+    private void Start()
+    {
+        GameController.Instance.InsertNewHeart(health, true);
+    }
+
+    public void ReceiveHit(int damage, Vector3 aggressorPosition)
     {
         if (Time.time < _invulnerabilityTimer) return;
         _invulnerabilityTimer = Time.time + invulnerabilityAfterHit;
         currentHealth -= damage;
-
+        GameController.Instance.UpdateHeartContainers(damage, false);
         if (currentHealth <= 0)
         {
             ActivateDeath();
