@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -12,8 +13,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Projectile
+  - Player
   - 
   - 
   - 
@@ -39,6 +40,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Collideable
+    uniqueID: 1521582219
+    locked: 0
   - name: Floor
     uniqueID: 1629999385
     locked: 0
@@ -47,4 +51,10 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 3200190299
+    locked: 0
+  - name: UI
+    uniqueID: 1585419783
     locked: 0

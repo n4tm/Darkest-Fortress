@@ -12,9 +12,8 @@ public class Projectile : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Enemy")) return;
-        other.GetComponent<Enemy.Enemy>().ReceiveHit(Damage);
-        gameObject.SetActive(false);
+        if (other.CompareTag("Enemy")) other.GetComponent<Enemy.Enemy>().ReceiveHit(Damage);
+        if (other.CompareTag("Wall") || other.CompareTag("Enemy")) gameObject.SetActive(false);
     }
 
     public void DeactivateProjectile(float projectileLifeTime)
