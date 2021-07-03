@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] private Transform cameraFocusPoint;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject shootPrefab;
     [SerializeField] private float projectileSpeed;
@@ -56,11 +57,16 @@ public class Weapon : MonoBehaviour
     {
         Vector2 direction;
         GameObject closestEnemy = GetClosestEnemy();
-        if (closestEnemy != null) direction = closestEnemy.transform.position - transform.position;
+        if (closestEnemy != null)
+        {
+            direction = closestEnemy.transform.position - transform.position;
+            cameraFocusPoint.localPosition = direction / 2;
+        }
         else
         {
             if (_playerRb.velocity != Vector2.zero) _lookingDirection = _playerRb.velocity;
             direction = _lookingDirection;
+            cameraFocusPoint.localPosition = Vector3.zero;
         }
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
