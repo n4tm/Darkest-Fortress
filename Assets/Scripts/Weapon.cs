@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] private Transform cameraFocusPoint;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject shootPrefab;
     [SerializeField] private float projectileSpeed;
@@ -11,17 +12,22 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float projectilePoolSize;
     [SerializeField] private float lifeTime;
     [SerializeField] private float fireRate;
-    
+
+    private Vector2 _lookingDirection;
+    private Rigidbody2D _playerRb;
     private InputMap _inputMap;
     private Queue<GameObject> _projectilePool;
     private float _fireRateTimer;
     private bool _shootPerformed;
+    private bool _hasChangedSide;
     
     private void Awake()
     {
+        _playerRb = transform.parent.GetComponent<Rigidbody2D>();
         _inputMap = new InputMap();
         _inputMap.Player.Shoot.performed += ShootPerformed;
         _inputMap.Player.Shoot.canceled += ShootPerformed;
+        
         _projectilePool = new Queue<GameObject>();
         for (int i = 0; i < projectilePoolSize; i++)
         {
@@ -50,10 +56,39 @@ public class Weapon : MonoBehaviour
 
     private void AdjustRotation()
     {
-        Vector2 direction = UnityEngine.Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
+        Vector2 direction;
+        GameObject closestEnemy = GetClosestEnemy();
+        
+        if (closestEnemy != null)
+        {
+            direction = closestEnemy.transform.position - transform.position;
+            cameraFocusPoint.localPosition = direction / 2;
+        }
+        else
+        {
+            if (_playerRb.velocity != Vector2.zero) _lookingDirection = _playerRb.velocity;
+            direction = _lookingDirection;
+            cameraFocusPoint.localPosition = Vector3.zero;
+        }
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
         transform.rotation = rotation;
+    }
+
+    private GameObject GetClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (enemies.Length == 0) return null;
+        GameObject closestEnemy = enemies[0];
+        float closestDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
+        foreach (var enemy in enemies)
+        {
+            if ((transform.position - enemy.transform.position).sqrMagnitude > Mathf.Pow(closestDistance, 2)) continue;
+            closestEnemy = enemy;
+            closestDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
+        }
+
+        return closestEnemy;
     }
 
     private void ShootPerformed(InputAction.CallbackContext ctx)

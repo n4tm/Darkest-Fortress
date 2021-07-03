@@ -6,7 +6,7 @@ namespace Enemy
     {
         [SerializeField] protected float speed;
         [SerializeField] protected float health;
-        [SerializeField] protected float damage;
+        [SerializeField] protected int damage;
         [SerializeField] protected float attackDelay;
         protected float AttackDelayTimer;
 
